@@ -1,0 +1,25 @@
+import pandas as pd
+import numpy as np
+import math
+
+
+def calculate_acceleration(velocities, indx, colx, fps):
+    accelerations = pd.DataFrame(data=0, index=np.arange(indx-2), columns=np.arange(colx), dtype=np.float64)
+    for j in range(colx):
+        for i in range(indx - 2):
+            velocity1 = velocities.iat[i, j]
+            velocity2 = velocities.iat[i+1, j]
+            accelerations.iat[i, j] = abs(velocity2-velocity1) * fps
+            accelerations.iat[i, j].round(9)
+    return accelerations  # in [mkm/s^2]
+
+
+def calculate_acceleration_2d(accx, accy, indx, colx):
+    acc_2d = pd.DataFrame(data=0, index=np.arange(indx - 2), columns=np.arange(colx), dtype=np.float64)
+    for j in range(colx):
+        for i in range(indx - 2):
+            acc_x = accx.iat[i, j]
+            acc_y = accy.iat[i, j]
+            acc_2d.iat[i, j] = math.sqrt(acc_x**2 + acc_y**2)
+            acc_2d.iat[i, j] = acc_2d.iat[i, j].round(9)
+    return acc_2d
