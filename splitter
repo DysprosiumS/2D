@@ -1,0 +1,93 @@
+import os
+from pathlib import Path
+
+
+def split_columns_file(input_file_path, max_columns_per_file):
+    """
+    Разбивает файл с несколькими столбцами на несколько файлов с заданным максимальным количеством столбцов
+
+    Args:
+        input_file_path (str): Путь к исходному файлу
+        max_columns_per_file (int): Максимальное количество столбцов в новых файлах
+    """
+
+    # Читаем исходный файл
+    with open(input_file_path, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+
+    if not lines:
+        print("Файл пуст!")
+        return
+
+    # Определяем количество столбцов в исходном файле
+    first_line_columns = lines[0].strip().split()
+    total_columns = len(first_line_columns)
+
+    print(f"Исходный файл содержит {total_columns} столбцов и {len(lines)} строк")
+
+    # Проверяем корректность максимального количества столбцов
+    if max_columns_per_file <= 0:
+        print("Ошибка: максимальное количество столбцов должно быть положительным числом")
+        return
+
+    if max_columns_per_file >= total_columns:
+        print("Ошибка: максимальное количество столбцов должно быть меньше общего количества столбцов")
+        return
+
+    # Вычисляем количество новых файлов
+    num_files = (total_columns + max_columns_per_file - 1) // max_columns_per_file
+
+    # Получаем информацию о файле для создания имен новых файлов
+    input_path = Path(input_file_path)
+    file_stem = input_path.stem
+    file_extension = input_path.suffix
+    output_dir = input_path.parent
+
+    print(f"Создаем {num_files} файлов...")
+
+    # Создаем новые файлы
+    for file_index in range(num_files):
+        # Определяем диапазон столбцов для текущего файла
+        start_col = file_index * max_columns_per_file
+        end_col = min((file_index + 1) * max_columns_per_file, total_columns)
+
+        # Формируем имя нового файла
+        output_filename = f"{file_stem}_part{file_index + 1}{file_extension}"
+        output_file_path = output_dir / output_filename
+
+        # Записываем данные в новый файл
+        with open(output_file_path, 'w', encoding='utf-8') as output_file:
+            for line in lines:
+                columns = line.strip().split()
+                # Берем только нужные столбцы
+                selected_columns = columns[start_col:end_col]
+                # Записываем строку с выбранными столбцами
+                output_file.write(' '.join(selected_columns) + '\n')
+
+        print(f"Создан файл: {output_filename} (столбцы {start_col + 1}-{end_col})")
+
+
+def main():
+    # Путь к папке с файлом (замените на ваш путь)
+    folder_path = r"C:/Users/Senos/OneDrive/Рабочий стол/статья волны/3/Rez/"  # Для Windows
+
+    # Имя исходного файла
+    input_filename = "X1000.txt"  # Замените на имя вашего файла
+
+    # Полный путь к файлу
+    input_file_path = os.path.join(folder_path, input_filename)
+
+    # Проверяем существование файла
+    if not os.path.exists(input_file_path):
+        print(f"Ошибка: файл {input_file_path} не найден!")
+        return
+
+    # Максимальное количество столбцов в новых файлах
+    max_columns = 200  # Замените на нужное значение
+
+    # Выполняем разделение файла
+    split_columns_file(input_file_path, max_columns)
+
+
+if __name__ == "__main__":
+    main()
