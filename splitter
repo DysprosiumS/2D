@@ -69,7 +69,7 @@ def split_columns_file(input_file_path, max_columns_per_file):
 
 def main():
     # Путь к папке с файлом (замените на ваш путь)
-    folder_path = r"C:/Users/Senos/OneDrive/Рабочий стол/статья волны/3/Rez/"  # Для Windows
+    folder_path = r"C:/Users/Senos/OneDrive/Рабочий стол/статья волны/3/Rez/" 
 
     # Имя исходного файла
     input_filename = "X1000.txt"  # Замените на имя вашего файла
