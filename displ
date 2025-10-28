@@ -1,27 +1,18 @@
-import pandas as pd
-import numpy as np
-import math
-
 
 # Calculating displacements
-def calculate_displacement(coords, indx, colx, Scale):
-    displ = pd.DataFrame(data=0, index=np.arange(indx-1), columns=np.arange(colx), dtype=np.float64)
-    for j in range(colx):
-        for i in range(indx - 1):
-            x1 = coords.iat[i, j]
-            x2 = coords.iat[i+1, j]
-            displ.iat[i, j] = (x2 - x1)*Scale
-            displ.iat[i, j] = displ.iat[i, j].round(7)
-    return displ  # in [mkm]
+def calculate_displacement(coords, scale):
+    displ = coords.diff()
+    displ = displ * scale
+    displ.dropna(axis=0, inplace=True)
+    displ = displ.round(7)
+    return displ  # in [cm]
 
 
 # Calculate mean displacement of 2 axes (X and Y)
-def calculate_displacement_2d(displx, disply, indx, colx):
-    displ_2d = pd.DataFrame(data=0, index=np.arange(indx - 1), columns=np.arange(colx), dtype=np.float64)
-    for j in range(colx):
-        for i in range(indx - 1):
-            displ_x = displx.iat[i, j]
-            displ_y = disply.iat[i, j]
-            displ_2d.iat[i, j] = math.sqrt(displ_x**2 + displ_y**2)
-            displ_2d.iat[i, j] = displ_2d.iat[i, j].round(7)
+def calculate_displacement_2d(displx, disply):
+    displ_x = displx.pow(2)
+    displ_y = disply.pow(2)
+    displ_2d = displ_x + displ_y
+    displ_2d = displ_2d.pow(0.5)
+    displ_2d = displ_2d.round(7)
     return displ_2d
